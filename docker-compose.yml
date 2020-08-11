@@ -6,6 +6,7 @@ services:
       - 9200:9200
       - 9300:9300
     environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
       - discovery.type=single-node
     ulimits:
       memlock:
@@ -13,9 +14,9 @@ services:
         hard: -1
     volumes:
       - ./docker-vol/elasticsearch/data:/usr/share/elasticsearch/data
-      - ./docker-vol/elasticsearch/config:/usr/share/elasticsearch/config
-      - ./docker-vol/elasticsearch/logs:/usr/share/elasticsearch/logs
-      - ./docker-vol/elasticsearch/plugins:/usr/share/elasticsearch/plugins
+  #      - ./docker-vol/elasticsearch/config:/usr/share/elasticsearch/config
+  #      - ./docker-vol/elasticsearch/logs:/usr/share/elasticsearch/logs
+  #      - ./docker-vol/elasticsearch/plugins:/usr/share/elasticsearch/plugins
 
   mysql:
     image: mysql:latest

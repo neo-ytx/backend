@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Optional;
+
 
 /**
  * @Author tyuan@ea.com
@@ -45,7 +47,10 @@ class UserRepositoryTest {
 
     @Test
     void findByUserId() {
-        User user = userRepository.findByUserId(1);
-        System.out.println(user.getNickname() + " " + user.getUsername());
+        Optional<User> userOptional = userRepository.findById(1);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            System.out.println(user.getNickname() + " " + user.getUsername());
+        }
     }
 }
