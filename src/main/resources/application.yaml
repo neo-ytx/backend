@@ -1,0 +1,32 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3307/backend?charactorEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: root
+    hikari:
+      minimum-idle: 5
+      idle-timeout: 180000
+      maximum-pool-size: 10
+      auto-commit: true
+      pool-name: MyHikariCP
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
+  data:
+    neo4j:
+      username: neo4j
+      password: 123456
+      uri: http://localhost:7474
+  elasticsearch:
+    rest:
+      uris: http://localhost:9200
+      username: elastic
+      password: 123456
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update

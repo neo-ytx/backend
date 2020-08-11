@@ -1,0 +1,37 @@
+version: "3.2"
+services:
+  elasticsearch:
+    image: elasticsearch:7.8.1
+    ports:
+      - 9200:9200
+      - 9300:9300
+    environment:
+      - discovery.type=single-node
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./docker-vol/elasticsearch/data:/usr/share/elasticsearch/data
+      - ./docker-vol/elasticsearch/config:/usr/share/elasticsearch/config
+      - ./docker-vol/elasticsearch/logs:/usr/share/elasticsearch/logs
+      - ./docker-vol/elasticsearch/plugins:/usr/share/elasticsearch/plugins
+
+  mysql:
+    image: mysql:latest
+    ports:
+      - 3307:3306
+    environment:
+      - MYSQL_DATABASE=backend
+      - MYSQL_ROOT_PASSWORD=root
+    volumes:
+      - ./docker-vol/mysql/conf/my.cnf:/etc/my.cnf
+      - ./docker-vol/mysql/data:/var/lib/mysql
+
+  Neo4j:
+    image: neo4j:4.1
+    ports:
+      - 7474:7474
+      - 7687:7687
+    volumes:
+      - ./docker-vol/neo4j/data:/data
