@@ -1,41 +1,34 @@
 package edu.fudan.backend.controller;
 
-import edu.fudan.backend.dao.UserRepository;
-import edu.fudan.backend.model.User;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * @Author tyuan@ea.com
- * @Date 8/11/2020 3:35 PM
+ * @Date 8/13/2020 2:49 PM
  */
 @RestController
 @RequestMapping("/api")
 @ResponseBody
 public class UserController {
-    @Autowired
-    private UserRepository userRepository;
 
-    @PostMapping("/login/account")
-    public Map<String, Object> login(@RequestBody Map<String, Object> body) {
+    @RequestMapping(value = "/currentUser", method = RequestMethod.GET)
+    public Map<String, Object> getCurrentUser() {
         Map<String, Object> result = new HashMap<>();
-        String type = (String) body.get("type");
-        result.put("type", type);
-        Optional<User> optionalUser = userRepository.findByUsernameAndPassword((String) body.get("username"), (String) body.get("password"));
-        if (optionalUser.isPresent()) {
-            result.put("status", "ok");
-            result.put("currentAuthority", "admin");
-            return result;
-        } else if (type.equals("mobile")) {
-            result.put("status", "ok");
-            result.put("currentAuthority", "admin");
-        }
-        result.put("status", "error");
-        result.put("currentAuthority", "guest");
+        result.put("name", "Yuan Tianxing");
+        result.put("avatar", "https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png");
+        result.put("userid", "00000001");
+        result.put("email", "admin@example.com");
+        result.put("signature", "干");
+        result.put("title", "研究生");
+        result.put("group", "609实验室");
+        result.put("country", "China");
         return result;
     }
+
 }
