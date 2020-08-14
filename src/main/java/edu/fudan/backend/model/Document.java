@@ -3,6 +3,7 @@ package edu.fudan.backend.model;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * @Author tyuan@ea.com
@@ -17,7 +18,18 @@ public class Document {
     @Column
     private String name;
     @Column
+    private String description;
+    @Column
+    private Integer userId;
+    @Column
     private Integer entityNum;
     @Column
-    private Integer relatioinNum;
+    private Integer relationNum;
+    @Column
+    private Integer status;
+    @Column
+    private Date createdTime;
+    @Column
+    private Date updatedTime;
+
 }
