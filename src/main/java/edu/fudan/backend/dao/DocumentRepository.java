@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface DocumentRepository extends JpaRepository<Document, Integer> {
 
-    Page<Document> findAllByUserId(String userId, Pageable pageable);
+    Page<Document> findAllByUsername(String userId, Pageable pageable);
 
-    Page<Document> findAllByUserIdAndNameLike(String userId, String name, Pageable pageable);
+    Page<Document> findAllByUsernameAndNameLike(String userId, String name, Pageable pageable);
 }

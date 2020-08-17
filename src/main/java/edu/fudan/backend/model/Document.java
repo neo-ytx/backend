@@ -1,6 +1,8 @@
 package edu.fudan.backend.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -11,6 +13,8 @@ import java.util.Date;
  */
 @Data
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 public class Document {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,7 +24,7 @@ public class Document {
     @Column
     private String description;
     @Column
-    private Integer userId;
+    private String username;
     @Column
     private Integer entityNum;
     @Column

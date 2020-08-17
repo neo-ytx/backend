@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,7 +23,7 @@ public class LoginController {
     private UserService userService;
 
     @PostMapping("/login/account")
-    public Map<String, Object> login(@RequestBody Map<String, Object> body) {
+    public Map<String, Object> login(HttpServletResponse response, @RequestBody Map<String, Object> body) {
         Map<String, Object> result = new HashMap<>();
         String type = (String) body.get("type");
         String username = (String) body.get("userName");
@@ -33,6 +35,9 @@ public class LoginController {
             if (auth.equals("guest")) {
                 result.put("status", "error");
             } else {
+                Cookie cookie = new Cookie("username", username);
+                cookie.setMaxAge(60 * 60 * 24 * 7); //保存7天
+                response.addCookie(cookie);
                 result.put("status", "ok");
             }
             return result;
