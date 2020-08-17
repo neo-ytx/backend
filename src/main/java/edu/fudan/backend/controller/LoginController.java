@@ -37,6 +37,7 @@ public class LoginController {
             } else {
                 Cookie cookie = new Cookie("username", username);
                 cookie.setMaxAge(60 * 60 * 24 * 7); //保存7天
+                cookie.setPath("/");
                 response.addCookie(cookie);
                 result.put("status", "ok");
             }

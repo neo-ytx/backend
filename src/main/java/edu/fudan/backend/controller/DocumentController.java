@@ -53,7 +53,7 @@ public class DocumentController {
             return result;
         } catch (Exception e) {
             result.put("status", "error");
-            log.info("upload document failure");
+            log.error("upload document failure", e);
             return result;
         }
     }

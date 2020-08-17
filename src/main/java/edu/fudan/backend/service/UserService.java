@@ -9,5 +9,5 @@ import edu.fudan.backend.model.User;
 public interface UserService {
     String authenticateUser(String username, String password, String type) throws Exception;
 
-    User getCurrentUser() throws Exception;
+    User getCurrentUser(String username) throws Exception;
 }

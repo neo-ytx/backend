@@ -54,7 +54,7 @@ public class DocumentServiceImpl implements DocumentService {
         Document document = new Document();
         document.setCreatedTime(date);
         document.setUpdatedTime(date);
-        document.setName(file.getName());
+        document.setName(file.getOriginalFilename());
         document.setDescription("用户" + username + "在" + dateFormatThreadLocal.get().format(date) + "创建文件:" + file.getName());
         document.setEntityNum(0);
         document.setRelationNum(0);

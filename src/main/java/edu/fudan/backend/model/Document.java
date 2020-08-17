@@ -35,5 +35,7 @@ public class Document {
     private Date createdTime;
     @Column
     private Date updatedTime;
+    @Column
+    private String jsonPos;
 
 }

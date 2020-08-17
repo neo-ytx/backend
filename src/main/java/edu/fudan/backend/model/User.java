@@ -26,7 +26,10 @@ public class User {
     private String nickname;
 
     @Column
-    String role;
+    private String email;
+
+    @Column
+    private String role;
 
     public User() {
     }
