@@ -27,7 +27,7 @@ spring:
       username: elastic
       password: 123456
   jpa:
-    show-sql: true
+    show-sql: false
     hibernate:
       ddl-auto: update
   servlet:

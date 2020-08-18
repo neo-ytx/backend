@@ -8,7 +8,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,14 +25,16 @@ public class DocumentController {
     private final DocumentService documentService;
 
     @RequestMapping(value = "/rule", method = RequestMethod.GET)
-    public Map<String, Object> getDocList(@RequestParam(value = "current", defaultValue = "1") Integer current,
-                                          @RequestParam(value = "pageSize", defaultValue = "20") Integer pageNum,
-                                          @RequestParam(value = "sorter", defaultValue = "{}") Map<String, Object> sorter,
-                                          @RequestParam(value = "filter", defaultValue = "{}") Map<String, Object> filter) {
+    public Map<String, Object> getDocList(
+            @CookieValue("username") String username,
+            @RequestParam(value = "current", defaultValue = "1") Integer current,
+            @RequestParam(value = "pageSize", defaultValue = "20") Integer pageNum,
+            @RequestParam(value = "sorter", defaultValue = "{}") String sorter,
+            @RequestParam(value = "filter", defaultValue = "{}") String filter) {
         Map<String, Object> result = new HashMap<>();
         try {
-            Page<Document> list = documentService.getAllDocument(current, pageNum, "1");
-            result.put("dataSource", list.getContent());
+            Page<Document> list = documentService.getAllDocument(current, pageNum, username);
+            result.put("data", databaseToController(list.getContent()));
             result.put("total", list.getTotalElements());
             result.put("success", true);
             result.put("pageSize", pageNum);
@@ -59,9 +63,32 @@ public class DocumentController {
     }
 
     @RequestMapping(value = "/rule", method = RequestMethod.DELETE)
-    public Map<String, Object> deleteDoc() {
-        log.info("delete document");
+    public Map<String, Object> deleteDoc(@RequestBody Map<String, Object> body) {
+        try {
+            documentService.deleteFiles((List<Integer>) body.get("key"));
+            log.info("delete document:{}", body);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return null;
+    }
+
+    private List<Map<String, Object>> databaseToController(List<Document> documentList) {
+        List<Map<String, Object>> data = new ArrayList<>();
+        for (Document document : documentList) {
+            Map<String, Object> doc = new HashMap<>();
+            doc.put("key", document.getId());
+            doc.put("desc", document.getDescription());
+            doc.put("name", document.getName());
+            doc.put("owner", document.getUsername());
+            doc.put("entityNo", document.getEntityNum());
+            doc.put("ralNo", document.getRelationNum());
+            doc.put("createdAt", document.getCreatedTime());
+            doc.put("updatedTime", document.getUpdatedTime());
+            doc.put("status", document.getStatus());
+            data.add(doc);
+        }
+        return data;
     }
 
     @Autowired

@@ -16,6 +16,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @Author tyuan@ea.com
@@ -36,6 +37,7 @@ public class DocumentServiceImpl implements DocumentService {
         Page<Document> list;
         if (name == null) {
             list = documentRepository.findAllByUsername(username, pageable);
+
         } else {
             list = documentRepository.findAllByUsernameAndNameLike(username, name + "*", pageable);
         }
@@ -44,7 +46,7 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Override
     public Page<Document> getAllDocument(Integer current, Integer pageSize, String username) throws Exception {
-        Pageable pageable = PageRequest.of(2, 20);
+        Pageable pageable = PageRequest.of(current - 1, pageSize);
         return this.getAllDocument(username, null, pageable);
     }
 
@@ -74,5 +76,17 @@ public class DocumentServiceImpl implements DocumentService {
         esDocument.setCreateTime(date);
         esDocument.setName(file.getName());
         esDocumentRepository.save(esDocument);
+    }
+
+    @Override
+    public void deleteFiles(List<Integer> keyList) throws Exception {
+        for (Integer key : keyList) {
+            this.deleteFile(key);
+        }
+    }
+
+    @Override
+    public void deleteFile(Integer key) throws Exception {
+        documentRepository.deleteById(key);
     }
 }
