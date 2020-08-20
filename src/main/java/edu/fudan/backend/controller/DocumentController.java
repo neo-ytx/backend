@@ -1,14 +1,11 @@
 package edu.fudan.backend.controller;
 
-import edu.fudan.backend.model.Document;
 import edu.fudan.backend.service.DocumentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,9 +30,9 @@ public class DocumentController {
             @RequestParam(value = "filter", defaultValue = "{}") String filter) {
         Map<String, Object> result = new HashMap<>();
         try {
-            Page<Document> list = documentService.getAllDocument(current, pageNum, username);
-            result.put("data", databaseToController(list.getContent()));
-            result.put("total", list.getTotalElements());
+            Map<String, Object> allDocument = documentService.getAllDocument(current, pageNum, username);
+            result.put("data", allDocument.get("list"));
+            result.put("total", allDocument.get("total"));
             result.put("success", true);
             result.put("pageSize", pageNum);
             result.put("current", current);
@@ -73,23 +70,6 @@ public class DocumentController {
         return null;
     }
 
-    private List<Map<String, Object>> databaseToController(List<Document> documentList) {
-        List<Map<String, Object>> data = new ArrayList<>();
-        for (Document document : documentList) {
-            Map<String, Object> doc = new HashMap<>();
-            doc.put("key", document.getId());
-            doc.put("desc", document.getDescription());
-            doc.put("name", document.getName());
-            doc.put("owner", document.getUsername());
-            doc.put("entityNo", document.getEntityNum());
-            doc.put("ralNo", document.getRelationNum());
-            doc.put("createdAt", document.getCreatedTime());
-            doc.put("updatedTime", document.getUpdatedTime());
-            doc.put("status", document.getStatus());
-            data.add(doc);
-        }
-        return data;
-    }
 
     @Autowired
     public DocumentController(DocumentService documentService) {

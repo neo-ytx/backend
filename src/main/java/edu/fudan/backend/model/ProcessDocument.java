@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Data
@@ -18,9 +19,26 @@ public class ProcessDocument {
     @Column
     private Integer documentId;
 
+    @Column
+    private String name;
     /**
-     * Wait, Run, Finish
+     * active, exception, normal, finish
      */
     @Column
     private String status;
+
+    @Column
+    private Date createTime;
+
+    @Column
+    private Date updateTime;
+
+    @Column
+    private String Owner;
+
+    @Column
+    private Integer percent;
+
+    @Column
+    private String description;
 }

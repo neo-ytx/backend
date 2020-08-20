@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author tyuan@ea.com
@@ -14,7 +15,7 @@ import java.util.List;
 public interface DocumentService {
     Page<Document> getAllDocument(String username, String name, Pageable pageable) throws Exception;
 
-    Page<Document> getAllDocument(Integer current, Integer pageSize, String username) throws Exception;
+    Map<String, Object> getAllDocument(Integer current, Integer pageSize, String username) throws Exception;
 
     void uploadFile(MultipartFile file, String username) throws Exception;
 

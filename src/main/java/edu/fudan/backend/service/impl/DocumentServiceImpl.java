@@ -15,8 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @Author tyuan@ea.com
@@ -45,9 +44,13 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public Page<Document> getAllDocument(Integer current, Integer pageSize, String username) throws Exception {
+    public Map<String, Object> getAllDocument(Integer current, Integer pageSize, String username) throws Exception {
         Pageable pageable = PageRequest.of(current - 1, pageSize);
-        return this.getAllDocument(username, null, pageable);
+        Page<Document> documentPage = this.getAllDocument(username, null, pageable);
+        Map<String, Object> result = new HashMap<>();
+        result.put("list", documentObjectToMap(documentPage.getContent()));
+        result.put("total", documentPage.getTotalElements());
+        return result;
     }
 
     @Override
@@ -88,5 +91,23 @@ public class DocumentServiceImpl implements DocumentService {
     @Override
     public void deleteFile(Integer key) throws Exception {
         documentRepository.deleteById(key);
+    }
+
+    private List<Map<String, Object>> documentObjectToMap(List<Document> documentList) {
+        List<Map<String, Object>> data = new ArrayList<>();
+        for (Document document : documentList) {
+            Map<String, Object> doc = new HashMap<>();
+            doc.put("key", document.getId());
+            doc.put("desc", document.getDescription());
+            doc.put("name", document.getName());
+            doc.put("owner", document.getUsername());
+            doc.put("entityNo", document.getEntityNum());
+            doc.put("ralNo", document.getRelationNum());
+            doc.put("createdAt", document.getCreatedTime());
+            doc.put("updatedTime", document.getUpdatedTime());
+            doc.put("status", document.getStatus());
+            data.add(doc);
+        }
+        return data;
     }
 }

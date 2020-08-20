@@ -29,6 +29,11 @@ public class Document {
     private Integer entityNum;
     @Column
     private Integer relationNum;
+    /**
+     * 0：已处理
+     * 1：未处理
+     * 2：正在处理
+     */
     @Column
     private Integer status;
     @Column

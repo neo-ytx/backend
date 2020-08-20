@@ -9,8 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -22,6 +21,24 @@ public class ProcessServiceImpl implements ProcessService {
     private ProcessDocumentRepository processDocumentRepository;
 
     @Override
+    public List<Map<String, Object>> getAllProcess() throws Exception {
+        List<ProcessDocument> list = processDocumentRepository.findAll();
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (ProcessDocument processDocument : list) {
+            Map<String, Object> obj = new HashMap<>();
+            obj.put("key", processDocument.getId());
+            obj.put("title", processDocument.getName());
+            obj.put("description", processDocument.getDescription());
+            obj.put("createdAt", processDocument.getCreateTime());
+            obj.put("percent", processDocument.getPercent());
+            obj.put("owner", processDocument.getOwner());
+            obj.put("status", processDocument.getStatus());
+            result.add(obj);
+        }
+        return result;
+    }
+
+    @Override
     public void createProcess(Integer documentId) throws Exception {
         Optional<Document> optionalDocument = documentRepository.findById(documentId);
         if (optionalDocument.isPresent()) {
@@ -30,6 +47,13 @@ public class ProcessServiceImpl implements ProcessService {
             ProcessDocument processDocument = new ProcessDocument();
             processDocument.setDocumentId(documentId);
             processDocument.setStatus("Wait");
+            processDocument.setCreateTime(new Date());
+            processDocument.setDescription(document.getDescription());
+            processDocument.setName(document.getName());
+            processDocument.setOwner(document.getUsername());
+            processDocument.setUpdateTime(processDocument.getCreateTime());
+            processDocument.setPercent(0);
+            processDocument.setStatus("normal");
             documentRepository.save(document);
             processDocumentRepository.save(processDocument);
         } else {
@@ -39,17 +63,25 @@ public class ProcessServiceImpl implements ProcessService {
     }
 
     @Override
+    public void createProcess(List<Integer> documentIdList) throws Exception {
+        for (Integer documentId : documentIdList) {
+            this.createProcess(documentId);
+        }
+    }
+
+    @Override
     public void startProcess() throws Exception {
-        List<ProcessDocument> processDocuments = processDocumentRepository.findAllByStatus("Run");
+        List<ProcessDocument> processDocuments = processDocumentRepository.findAllByStatus("active");
         if (processDocuments.size() > 0) {
             log.warn("there is a process running.");
             return;
         }
-        processDocuments = processDocumentRepository.findAllByStatus("Wait");
+        processDocuments = processDocumentRepository.findAllByStatus("normal");
         if (processDocuments.size() > 0) {
             ProcessDocument processDocument = processDocuments.get(0);
             // TODO: 2020/8/19 run python job
-            processDocument.setStatus("Start");
+            processDocument.setStatus("active");
+            processDocument.setPercent((int) (Math.random() * 100));
             processDocumentRepository.save(processDocument);
         } else {
             log.warn("there are no processes.");
@@ -58,7 +90,7 @@ public class ProcessServiceImpl implements ProcessService {
 
     @Override
     public Boolean startProcess(Integer processId) throws Exception {
-        List<ProcessDocument> processDocuments = processDocumentRepository.findAllByStatus("Run");
+        List<ProcessDocument> processDocuments = processDocumentRepository.findAllByStatus("active");
         if (processDocuments.size() > 0) {
             log.warn("there is a process running.");
             return false;
@@ -66,7 +98,7 @@ public class ProcessServiceImpl implements ProcessService {
         Optional<ProcessDocument> optional = processDocumentRepository.findById(processId);
         if (optional.isPresent()) {
             ProcessDocument processDocument = optional.get();
-            processDocument.setStatus("Run");
+            processDocument.setStatus("active");
             processDocumentRepository.save(processDocument);
             return true;
         } else {
@@ -77,7 +109,18 @@ public class ProcessServiceImpl implements ProcessService {
 
     @Override
     public void finishProcess(Integer documentId) throws Exception {
-
+        List<ProcessDocument> processDocuments = processDocumentRepository.findAllByStatus("active");
+        for (ProcessDocument processDocument : processDocuments) {
+            processDocument.setStatus("finish");
+            processDocumentRepository.save(processDocument);
+            Document document = documentRepository.getOne(processDocument.getDocumentId());
+            if (document != null) {
+                document.setStatus(0);
+                documentRepository.save(document);
+            } else {
+                log.error("document {} does not exist", processDocument.getDocumentId());
+            }
+        }
     }
 
 }
