@@ -54,4 +54,24 @@ public class ProcessController {
         }
         return result;
     }
+
+    @RequestMapping(value = "/process_time", method = RequestMethod.GET)
+    public String getProcessTime() {
+        try {
+            return processService.getProcessTime();
+        } catch (Exception e) {
+            log.error("get Process Time error");
+            return "0";
+        }
+    }
+
+    @RequestMapping(value = "/process_finish_size", method = RequestMethod.GET)
+    public String getFinishSize() {
+        try {
+            return String.valueOf(processService.getProcessFinish());
+        } catch (Exception e) {
+            log.error("get Finish Size error");
+            return "0";
+        }
+    }
 }

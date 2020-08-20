@@ -123,4 +123,20 @@ public class ProcessServiceImpl implements ProcessService {
         }
     }
 
+    @Override
+    public String getProcessTime() throws Exception {
+        List<ProcessDocument> list = processDocumentRepository.findAllByStatus("finish");
+        long allTime = 0;
+        for (ProcessDocument processDocument : list) {
+            allTime += processDocument.getUpdateTime().getTime() - processDocument.getCreateTime().getTime();
+        }
+        long time = (list.size() != 0 ? allTime / list.size() : 0) / 60;
+        return String.valueOf(time);
+    }
+
+    @Override
+    public Integer getProcessFinish() throws Exception {
+        return processDocumentRepository.findAllByStatus("finish").size();
+    }
+
 }
