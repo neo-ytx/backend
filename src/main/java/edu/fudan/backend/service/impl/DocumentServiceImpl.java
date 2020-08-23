@@ -3,8 +3,8 @@ package edu.fudan.backend.service.impl;
 import edu.fudan.backend.dao.DocumentRepository;
 import edu.fudan.backend.dao.EsDocumentRepository;
 import edu.fudan.backend.model.Document;
-import edu.fudan.backend.model.EsDocument;
 import edu.fudan.backend.service.DocumentService;
+import edu.fudan.backend.service.ElasticsearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,8 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -28,6 +26,9 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Autowired
     private EsDocumentRepository esDocumentRepository;
+
+    @Autowired
+    private ElasticsearchService elasticsearchService;
 
     private static ThreadLocal<SimpleDateFormat> dateFormatThreadLocal = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss"));
 
@@ -65,20 +66,8 @@ public class DocumentServiceImpl implements DocumentService {
         document.setRelationNum(0);
         document.setStatus(1);
         document.setUsername(username);
-        documentRepository.save(document);
-        String type = file.getContentType();
-        InputStream inputStream = file.getInputStream();
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        byte[] buffer = new byte[1024];
-        int length;
-        while ((length = inputStream.read(buffer)) != -1) {
-            result.write(buffer, 0, length);
-        }
-        EsDocument esDocument = new EsDocument();
-        esDocument.setContent(result.toString());
-        esDocument.setCreateTime(date);
-        esDocument.setName(file.getName());
-        esDocumentRepository.save(esDocument);
+        document = documentRepository.save(document);
+        elasticsearchService.createIndexFromDB(document, file);
     }
 
     @Override

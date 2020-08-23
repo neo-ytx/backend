@@ -1,7 +1,6 @@
 package edu.fudan.backend.config;
 
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
@@ -9,7 +8,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @Date 8/11/2020 3:36 PM
  */
 @Configuration
-@EnableNeo4jRepositories
 @EnableTransactionManagement
 public class NeoConfig {
 //    @Bean

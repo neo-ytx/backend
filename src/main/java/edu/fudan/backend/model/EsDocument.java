@@ -5,12 +5,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.DateFormat;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
-
-import java.util.Date;
 
 /**
  * @Author tyuan@ea.com
@@ -23,11 +20,11 @@ import java.util.Date;
 @Document(indexName = "document", shards = 5, replicas = 1)
 public class EsDocument {
     @Id
-    private Long id;
-    @Field(type = FieldType.Keyword)
+    private String id;
+    @Field(type = FieldType.Integer)
+    private Long documentId;
+    @Field(type = FieldType.Text, searchAnalyzer = "ik_smart", analyzer = "ik_max_word")
     private String name;
-    @Field(type = FieldType.Date, format = DateFormat.custom, pattern = "yyyy-MM-dd'T'hh:mm:ss.SSS'Z'")
-    private Date createTime;
-    @Field(type = FieldType.Text, analyzer = "ik_max_word")
+    @Field(type = FieldType.Text, searchAnalyzer = "ik_smart", analyzer = "ik_max_word")
     private String content;
 }
