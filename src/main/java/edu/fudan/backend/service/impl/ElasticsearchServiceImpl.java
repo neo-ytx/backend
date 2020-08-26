@@ -32,6 +32,8 @@ public class ElasticsearchServiceImpl implements ElasticsearchService {
     public void createIndexFromDB(Document document, MultipartFile file) throws Exception {
         String content = poiUtils.document2String(file);
         EsDocument esDocument = new EsDocument();
+        esDocument.setCreateTime(document.getCreatedTime());
+        esDocument.setUsername(document.getUsername());
         esDocument.setContent(content);
         esDocument.setDocumentId((long) document.getId());
         esDocument.setName(file.getName());
@@ -50,14 +52,15 @@ public class ElasticsearchServiceImpl implements ElasticsearchService {
         for (SearchHit<EsDocument> searchHit : searchHitsList) {
             Map<String, Object> objectMap = new HashMap<>();
             Map<String, List<String>> map = searchHit.getHighlightFields();
-            ;
             List<String> list = map.get("content");
             StringBuilder stringBuilder = new StringBuilder();
             for (String content : list) {
                 stringBuilder.append(content).append("......");
             }
-            objectMap.put("name", searchHit.getContent().getName());
+            objectMap.put("title", searchHit.getContent().getName());
             objectMap.put("content", stringBuilder.toString());
+            objectMap.put("owner", searchHit.getContent().getUsername());
+            objectMap.put("createAt", searchHit.getContent().getCreateTime());
             result.add(objectMap);
         }
         return result;

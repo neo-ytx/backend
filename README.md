@@ -17,7 +17,7 @@ docker-compose rm
 ### ik analyzer setup
 + elasticsearch setup ik analyze(Notice: change the version in url)
 ```bash
-docker-compose exec es01 elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.8.1/elasticsearch-analysis-ik-7.8.1.zip
+docker-compose exec elasticsearch elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.8.1/elasticsearch-analysis-ik-7.8.1.zip
 docker restart ${container_name}
 # Or
 docker -it exec ${container_name} bash
