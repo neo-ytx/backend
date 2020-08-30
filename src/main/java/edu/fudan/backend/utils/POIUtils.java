@@ -18,7 +18,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.text.DecimalFormat;
@@ -26,11 +25,11 @@ import java.text.DecimalFormat;
 @Component
 @Slf4j
 public class POIUtils {
-    public String document2String(MultipartFile file) {
+    public String document2String(File file) {
         try {
-            String filename = file.getOriginalFilename();
+            String filename = file.getName();
             String type = filename.substring(filename.lastIndexOf("."));
-            InputStream inputStream = file.getInputStream();
+            InputStream inputStream = new FileInputStream(file);
             switch (type) {
                 case ".doc":
                     return this.readWord(inputStream);

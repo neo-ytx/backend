@@ -5,13 +5,18 @@ import edu.fudan.backend.dao.EsDocumentRepository;
 import edu.fudan.backend.model.Document;
 import edu.fudan.backend.service.DocumentService;
 import edu.fudan.backend.service.ElasticsearchService;
+import edu.fudan.backend.utils.FileUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -20,6 +25,7 @@ import java.util.*;
  * @Date 8/14/2020 11:23 AM
  */
 @Service
+@Slf4j
 public class DocumentServiceImpl implements DocumentService {
     @Autowired
     private DocumentRepository documentRepository;
@@ -29,6 +35,9 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Autowired
     private ElasticsearchService elasticsearchService;
+
+    @Value("${file.uploadFolder}")
+    private String fileRoot;
 
     private static ThreadLocal<SimpleDateFormat> dateFormatThreadLocal = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss"));
 
@@ -57,17 +66,30 @@ public class DocumentServiceImpl implements DocumentService {
     @Override
     public void uploadFile(MultipartFile file, String username) throws Exception {
         Date date = new Date();
+        String filename = file.getOriginalFilename();
+        String path = fileRoot + "static/" + username + "/";
+        String type = filename.substring(filename.lastIndexOf("."));
+
         Document document = new Document();
+        document.setUuid(UUID.randomUUID().toString());
         document.setCreatedTime(date);
         document.setUpdatedTime(date);
-        document.setName(file.getOriginalFilename());
-        document.setDescription("用户" + username + "在" + dateFormatThreadLocal.get().format(date) + "创建文件:" + file.getName());
+        document.setName(filename);
+        document.setDescription("用户" + username + "在" + dateFormatThreadLocal.get().format(date) + "创建文件:" + filename);
         document.setEntityNum(0);
         document.setRelationNum(0);
         document.setStatus(1);
         document.setUsername(username);
         document = documentRepository.save(document);
-        elasticsearchService.createIndexFromDB(document, file);
+        try {
+            FileUtils.fileUpload(file.getBytes(), path, document.getUuid() + type);
+        } catch (IOException e) {
+            log.error("upload File IO error.", e);
+        }
+
+        File originFile = new File(path + document.getUuid() + type);
+
+        elasticsearchService.createIndexFromDB(document, originFile);
     }
 
     @Override
@@ -87,6 +109,7 @@ public class DocumentServiceImpl implements DocumentService {
         for (Document document : documentList) {
             Map<String, Object> doc = new HashMap<>();
             doc.put("key", document.getId());
+            doc.put("uuid", document.getUuid());
             doc.put("desc", document.getDescription());
             doc.put("name", document.getName());
             doc.put("owner", document.getUsername());
@@ -98,5 +121,9 @@ public class DocumentServiceImpl implements DocumentService {
             data.add(doc);
         }
         return data;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(UUID.randomUUID().toString());
     }
 }

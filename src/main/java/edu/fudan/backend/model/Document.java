@@ -20,6 +20,8 @@ public class Document {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @Column
+    private String uuid;
+    @Column
     private String name;
     @Column
     private String description;

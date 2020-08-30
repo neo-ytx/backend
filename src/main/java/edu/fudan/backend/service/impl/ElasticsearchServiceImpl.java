@@ -10,8 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,14 +29,14 @@ public class ElasticsearchServiceImpl implements ElasticsearchService {
 
     @Async
     @Override
-    public void createIndexFromDB(Document document, MultipartFile file) throws Exception {
+    public void createIndexFromDB(Document document, File file) throws Exception {
         String content = poiUtils.document2String(file);
         EsDocument esDocument = new EsDocument();
         esDocument.setCreateTime(document.getCreatedTime());
         esDocument.setUsername(document.getUsername());
         esDocument.setContent(content);
         esDocument.setDocumentId((long) document.getId());
-        esDocument.setName(file.getName());
+        esDocument.setName(document.getName());
         this.createIndex(esDocument);
     }
 
