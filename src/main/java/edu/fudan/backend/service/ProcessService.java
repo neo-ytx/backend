@@ -14,9 +14,9 @@ public interface ProcessService {
 
     Boolean startProcess(Integer documentId) throws Exception;
 
-    void finishProcess(Integer documentId) throws Exception;
-
     String getProcessTime() throws Exception;
 
     Integer getProcessFinish() throws Exception;
+
+    void updateProcess(Integer processId, Integer percent, String status, String filename) throws Exception;
 }

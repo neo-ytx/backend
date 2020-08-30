@@ -19,6 +19,11 @@ public class ProcessController {
     @Autowired
     private ProcessService processService;
 
+    /**
+     * 获得处理列表
+     *
+     * @return
+     */
     @RequestMapping(value = "/process_list", method = RequestMethod.GET)
     public List<Map<String, Object>> getAllProcess() {
         try {
@@ -43,10 +48,14 @@ public class ProcessController {
     }
 
     @RequestMapping(value = "/process", method = RequestMethod.POST)
-    public Map<String, Object> finishProcess(@RequestBody Map<String, Object> body) {
+    public Map<String, Object> updateProcess(@RequestBody Map<String, Object> body) {
         Map<String, Object> result = new HashMap<>();
         try {
-            processService.finishProcess((Integer) body.get("id"));
+            Integer processId = (Integer) body.get("id");
+            Integer percent = (Integer) body.get("percent");
+            String status = (String) body.get("status");
+            String filename = (String) body.get("filename");
+            processService.updateProcess(processId, percent, status, filename);
             result.put("status", "ok");
         } catch (Exception e) {
             log.error("finish process error");
@@ -55,6 +64,11 @@ public class ProcessController {
         return result;
     }
 
+    /**
+     * 获取平均处理时间
+     *
+     * @return
+     */
     @RequestMapping(value = "/process_time", method = RequestMethod.GET)
     public String getProcessTime() {
         try {

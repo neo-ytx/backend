@@ -5,20 +5,29 @@ import edu.fudan.backend.dao.ProcessDocumentRepository;
 import edu.fudan.backend.model.Document;
 import edu.fudan.backend.model.ProcessDocument;
 import edu.fudan.backend.service.ProcessService;
+import edu.fudan.backend.service.PythonService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
 @Slf4j
+
 public class ProcessServiceImpl implements ProcessService {
     @Autowired
     private DocumentRepository documentRepository;
 
     @Autowired
     private ProcessDocumentRepository processDocumentRepository;
+
+    @Autowired
+    private PythonService pythonService;
+
+    @Value("${file.uploadFolder}")
+    private String fileRoot;
 
     @Override
     public List<Map<String, Object>> getAllProcess() throws Exception {
@@ -79,7 +88,11 @@ public class ProcessServiceImpl implements ProcessService {
         processDocuments = processDocumentRepository.findAllByStatus("normal");
         if (processDocuments.size() > 0) {
             ProcessDocument processDocument = processDocuments.get(0);
-            // TODO: 2020/8/19 run python job
+            Document document = documentRepository.getOne(processDocument.getDocumentId());
+            String filenameOrigin = document.getName();
+            String type = filenameOrigin.substring(filenameOrigin.lastIndexOf("."));
+            String filename = fileRoot + "/static" + document.getUsername() + "/" + document.getUuid() + type;
+            pythonService.createJob(processDocument.getId(), filename);
             processDocument.setStatus("active");
             processDocument.setPercent((int) (Math.random() * 100));
             processDocumentRepository.save(processDocument);
@@ -107,21 +120,7 @@ public class ProcessServiceImpl implements ProcessService {
         }
     }
 
-    @Override
-    public void finishProcess(Integer documentId) throws Exception {
-        List<ProcessDocument> processDocuments = processDocumentRepository.findAllByStatus("active");
-        for (ProcessDocument processDocument : processDocuments) {
-            processDocument.setStatus("finish");
-            processDocumentRepository.save(processDocument);
-            Document document = documentRepository.getOne(processDocument.getDocumentId());
-            if (document != null) {
-                document.setStatus(0);
-                documentRepository.save(document);
-            } else {
-                log.error("document {} does not exist", processDocument.getDocumentId());
-            }
-        }
-    }
+
 
     @Override
     public String getProcessTime() throws Exception {
@@ -137,6 +136,28 @@ public class ProcessServiceImpl implements ProcessService {
     @Override
     public Integer getProcessFinish() throws Exception {
         return processDocumentRepository.findAllByStatus("finish").size();
+    }
+
+    @Override
+    public void updateProcess(Integer processId, Integer percent, String status, String filename) throws Exception {
+        ProcessDocument processDocument = processDocumentRepository.getOne(processId);
+        processDocument.setUpdateTime(new Date());
+        processDocument.setPercent(percent);
+        if (status != null && status.equals("active")) {
+            processDocument.setStatus(status);
+        } else if (status != null && status.equals("finish")) {
+            processDocument.setStatus(status);
+            Document document = documentRepository.getOne(processDocument.getDocumentId());
+            if (document != null) {
+                document.setStatus(0);
+                document.setJsonPos(filename);
+                documentRepository.save(document);
+            } else {
+                log.error("document {} does not exist", processDocument.getDocumentId());
+            }
+        }
+        processDocumentRepository.save(processDocument);
+
     }
 
 }
