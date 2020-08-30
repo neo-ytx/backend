@@ -17,7 +17,7 @@ public interface EsDocumentRepository extends ElasticsearchRepository<EsDocument
     @Highlight(fields = {
             @HighlightField(name = "name"),
             @HighlightField(name = "content")
-    }, parameters = @HighlightParameters(preTags = "<hl>", postTags = "</hl>"))
+    }, parameters = @HighlightParameters(preTags = "<em>", postTags = "</em>"))
     List<SearchHit<EsDocument>> findByNameOrContent(String name, String content);
 
 }
