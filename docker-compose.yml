@@ -36,3 +36,4 @@ services:
       - 7687:7687
     volumes:
       - ./docker-vol/neo4j/data:/data
+      - ./docker-vol/neo4j/import:/import

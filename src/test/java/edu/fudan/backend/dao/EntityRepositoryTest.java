@@ -9,7 +9,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -44,7 +46,9 @@ class EntityRepositoryTest {
 
     @Test
     void search() {
-        List<EntityNode> list = entityRepository.findAllByType("Country");
+        Set<String> labels = new HashSet<>();
+        labels.add("Country");
+        List<EntityNode> list = entityRepository.findAllByNameAndLabels("中国", labels);
         for (EntityNode entityNode : list) {
             System.out.println(entityNode.getName());
         }

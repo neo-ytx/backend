@@ -15,6 +15,7 @@ public class RelationNode {
     @StartNode
     private EntityNode startNode;
 
+    @Property(name = "name")
     private String name;
 
     @EndNode

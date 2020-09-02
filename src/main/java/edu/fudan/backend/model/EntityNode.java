@@ -9,7 +9,7 @@ import java.util.Set;
 
 @Getter
 @Setter
-@NodeEntity(label = "Entity")
+@NodeEntity
 public class EntityNode {
     @Id
     @GeneratedValue
@@ -18,15 +18,16 @@ public class EntityNode {
     @Property(name = "name")
     private String name;
 
-    @Property(name = "type")
-    private String type;
+    @Labels
+    private Set<String> labels;
 
     @Relationship(type = "RelationEdge")
     private Set<RelationNode> sets = new HashSet<>();
 
-    public EntityNode(String name, String type) {
+    public EntityNode(String name, String label) {
         this.name = name;
-        this.type = type;
+        this.labels = new HashSet<>();
+        this.labels.add(label);
     }
 
     public void addRelation(EntityNode endEntity, String name) {

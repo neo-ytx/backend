@@ -26,8 +26,9 @@ spring:
       uris: http://localhost:9200
       username: elastic
       password: 123456
+
   jpa:
-    show-sql: false
+    show-sql: true
     hibernate:
       ddl-auto: update
   servlet:
@@ -39,3 +40,4 @@ spring:
 file:
   uploadFolder: d://g/uploadFiles/
   staticAccessPath: /api/file/**
+
