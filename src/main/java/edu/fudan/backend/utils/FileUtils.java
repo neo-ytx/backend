@@ -3,10 +3,8 @@ package edu.fudan.backend.utils;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.util.Base64;
 
 @Slf4j
 public class FileUtils {
@@ -21,5 +19,25 @@ public class FileUtils {
         BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(target));
         stream.write(file);
         stream.close();
+    }
+
+    public static void saveBase64Img(String base64, String filePath, String fileName) throws IOException {
+        if (base64 != null && base64.contains("image/png;base64")) {
+            String input = base64.split(",")[1];
+            OutputStream out;
+            try {
+                Base64.Decoder decoder = Base64.getDecoder();
+                byte[] buffer = decoder.decode(input);
+                out = new FileOutputStream(filePath + fileName);
+                out.write(buffer);
+                out.flush();
+                out.close();
+            } catch (FileNotFoundException e) {
+                log.error("create image error", e);
+            }
+        } else {
+            log.error("base64 String is empty or don not meet requirement.");
+        }
+
     }
 }
