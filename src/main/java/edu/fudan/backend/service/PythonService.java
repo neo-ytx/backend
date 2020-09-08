@@ -6,4 +6,6 @@ package edu.fudan.backend.service;
  */
 public interface PythonService {
     void createJob(Integer processId, String filename) throws Exception;
+
+    void createGoodJob(Integer processId, String filename) throws Exception;
 }

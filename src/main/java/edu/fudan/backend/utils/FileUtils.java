@@ -1,13 +1,27 @@
 package edu.fudan.backend.utils;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
 import java.util.Base64;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 public class FileUtils {
+    public static void saveJson(List<Map<String, String>> list, String filename) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String content = objectMapper.writeValueAsString(list);
+        File target = new File(filename);
+        try (Writer writer = new FileWriter(target)) {
+            writer.write(content);
+        } catch (Exception e) {
+            log.error("write json", e);
+        }
+    }
+
     public static void fileUpload(byte[] file, String filePath, String fileName) throws IOException {
         File target = new File(filePath + fileName);
         if (!target.getParentFile().exists()) {

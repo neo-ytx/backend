@@ -23,7 +23,7 @@ public class ScheduledTasks {
         try {
             processService.startProcess();
         } catch (Exception e) {
-            log.error("start process error!");
+            log.error("start process error!", e);
         }
     }
 }

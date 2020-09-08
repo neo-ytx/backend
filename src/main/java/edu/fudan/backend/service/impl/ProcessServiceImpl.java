@@ -29,6 +29,9 @@ public class ProcessServiceImpl implements ProcessService {
     @Value("${file.uploadFolder}")
     private String fileRoot;
 
+    @Value("${python.APISwitch}")
+    private Boolean APISwitch;
+
     @Override
     public List<Map<String, Object>> getAllProcess() throws Exception {
         List<ProcessDocument> list = processDocumentRepository.findAll();
@@ -88,11 +91,21 @@ public class ProcessServiceImpl implements ProcessService {
         processDocuments = processDocumentRepository.findAllByStatus("normal");
         if (processDocuments.size() > 0) {
             ProcessDocument processDocument = processDocuments.get(0);
-            Document document = documentRepository.getOne(processDocument.getDocumentId());
+            Optional<Document> optionalDocument = documentRepository.findById(processDocument.getDocumentId());
+//            Document document = documentRepository.getOne(processDocument.getDocumentId());
+            if (!optionalDocument.isPresent()) {
+                log.error("document is null");
+                return;
+            }
+            Document document = optionalDocument.get();
             String filenameOrigin = document.getName();
             String type = filenameOrigin.substring(filenameOrigin.lastIndexOf("."));
             String filename = fileRoot + "/static" + document.getUsername() + "/" + document.getUuid() + type;
-            pythonService.createJob(processDocument.getId(), filename);
+            if (APISwitch) {
+                pythonService.createGoodJob(processDocument.getId(), filename);
+            } else {
+                pythonService.createJob(processDocument.getId(), filename);
+            }
             processDocument.setStatus("active");
             processDocument.setPercent((int) (Math.random() * 100));
             processDocumentRepository.save(processDocument);

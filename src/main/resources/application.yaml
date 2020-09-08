@@ -41,3 +41,5 @@ file:
   uploadFolder: d://g/uploadFiles/
   staticAccessPath: /api/file/**
 
+python:
+  APISwitch: true

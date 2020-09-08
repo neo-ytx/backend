@@ -160,9 +160,4 @@ public class POIUtils {
         return stringBuilder.toString();
     }
 
-    public static void main(String ags[]) throws Exception {
-        File file = new File("c:/Users/ytxlo/Desktop/test1.docx");
-        InputStream inputStream = new FileInputStream(file);
-        new POIUtils().readWordX(inputStream);
-    }
 }

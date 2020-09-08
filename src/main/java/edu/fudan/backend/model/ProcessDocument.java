@@ -34,7 +34,7 @@ public class ProcessDocument {
     private Date updateTime;
 
     @Column
-    private String Owner;
+    private String owner;
 
     @Column
     private Integer percent;

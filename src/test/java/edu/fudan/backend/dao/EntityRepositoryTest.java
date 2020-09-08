@@ -28,7 +28,6 @@ class EntityRepositoryTest {
         EntityNode node4 = new EntityNode("美国", "Country");
         EntityNode node5 = new EntityNode("纽约", "City");
         EntityNode node6 = new EntityNode("洛杉矶", "City");
-
         node1.addRelation(node2, "包含");
         node1.addRelation(node3, "包含");
         node4.addRelation(node5, "包含");
@@ -52,5 +51,16 @@ class EntityRepositoryTest {
         for (EntityNode entityNode : list) {
             System.out.println(entityNode.getName());
         }
+    }
+
+    static long gcd(long a, long b) {
+        return b == 0 ? a : gcd(b, a % b);
+    }
+
+    static long lcm(long a, long b) {
+        return a / gcd(a, b) * b;
+    }
+
+    public static void main(String[] args) {
     }
 }
