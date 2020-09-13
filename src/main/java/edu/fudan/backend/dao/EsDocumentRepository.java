@@ -21,4 +21,6 @@ public interface EsDocumentRepository extends ElasticsearchRepository<EsDocument
     List<SearchHit<EsDocument>> findByNameOrContent(String name, String content);
 
     List<EsDocument> findAllByDocumentId(Long documentId);
+
+    void deleteByDocumentId(Long documentId);
 }

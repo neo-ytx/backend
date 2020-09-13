@@ -26,9 +26,9 @@ public class TopicServiceImpl implements TopicService {
 
     @Override
     public List<Image> getAllImage(String topicName) throws Exception {
-        List<Topic> list = topicRepository.getAllByName(topicName);
+        List<Topic> list = topicRepository.findAllByName(topicName);
         if (list.size() > 0) {
-            Long id = list.get(0).getId();
+            Integer id = list.get(0).getId();
             List<Image> imageList = imageRepository.findAllByTopicId(id);
             return imageList;
         }

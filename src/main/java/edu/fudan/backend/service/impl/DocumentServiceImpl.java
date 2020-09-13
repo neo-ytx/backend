@@ -101,6 +101,7 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Override
     public void deleteFile(Integer key) throws Exception {
+        esDocumentRepository.deleteByDocumentId((long) key);
         documentRepository.deleteById(key);
     }
 

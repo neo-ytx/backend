@@ -3,9 +3,11 @@ package edu.fudan.backend.service.impl;
 import edu.fudan.backend.client.GoodClient;
 import edu.fudan.backend.client.PythonClient;
 import edu.fudan.backend.dao.DocumentRepository;
+import edu.fudan.backend.dao.EntityRepository;
 import edu.fudan.backend.dao.EsDocumentRepository;
 import edu.fudan.backend.dao.ProcessDocumentRepository;
 import edu.fudan.backend.model.Document;
+import edu.fudan.backend.model.EntityNode;
 import edu.fudan.backend.model.EsDocument;
 import edu.fudan.backend.model.ProcessDocument;
 import edu.fudan.backend.service.PythonService;
@@ -41,6 +43,9 @@ public class PythonServiceImpl implements PythonService {
 
     @Autowired
     private EsDocumentRepository esDocumentRepository;
+
+    @Autowired
+    private EntityRepository entityRepository;
 
     @Override
     public void createJob(Integer processId, String filename) throws Exception {
@@ -96,7 +101,27 @@ public class PythonServiceImpl implements PythonService {
         Document document = optionalDocument.get();
         String path = fileRoot + "static/" + document.getUsername() + "/" + document.getUuid() + ".json";
         FileUtils.saveJson(result, path);
-        // TODO: 2020/9/8 处理数据结果
+        Set<String> entity = new HashSet<>();
+        Set<String> rel = new HashSet<>();
+
+        List<EntityNode> saveList = new ArrayList<>();
+        for (Map<String, String> item : result) {
+            entity.add(item.get("Object"));
+            entity.add(item.get("Subject"));
+            rel.add(item.get("Predicate"));
+            EntityNode object = new EntityNode(item.get("Object"), "object");
+            EntityNode subject = new EntityNode(item.get("Subject"), "subject");
+            subject.addRelation(object, item.get("Predicate"));
+            saveList.add(subject);
+            saveList.add(object);
+        }
+        entityRepository.saveAll(saveList);
+
+        document.setJsonPos(path);
+        document.setEntityNum(entity.size());
+        document.setRelationNum(rel.size());
+        document.setStatus(0);
+        documentRepository.save(document);
 
     }
 }

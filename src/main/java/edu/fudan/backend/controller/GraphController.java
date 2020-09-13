@@ -46,4 +46,18 @@ public class GraphController {
 //        }
         return result;
     }
+
+    @RequestMapping(value = "/searchGraph", method = RequestMethod.GET)
+    public Map<String, Object> search(@RequestParam("keyword") String keyword) {
+        Map<String, Object> result = new HashMap<>();
+        try {
+            Map<String, Object> searchResult = graphService.search(keyword);
+            result.put("status", "ok");
+            result.put("result", searchResult);
+        } catch (Exception e) {
+            result.put("status", "error");
+            log.error("search from elasticsearch error", e);
+        }
+        return result;
+    }
 }

@@ -37,12 +37,19 @@ public class FileUtils {
 
     public static void saveBase64Img(String base64, String filePath, String fileName) throws IOException {
         if (base64 != null && base64.contains("image/png;base64")) {
+            File target = new File(filePath + fileName);
+            if (!target.getParentFile().exists()) {
+                boolean result = target.getParentFile().mkdirs();
+                if (!result) {
+                    log.error("create file path error.");
+                }
+            }
             String input = base64.split(",")[1];
             OutputStream out;
             try {
                 Base64.Decoder decoder = Base64.getDecoder();
                 byte[] buffer = decoder.decode(input);
-                out = new FileOutputStream(filePath + fileName);
+                out = new FileOutputStream(target);
                 out.write(buffer);
                 out.flush();
                 out.close();
