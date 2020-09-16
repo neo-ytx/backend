@@ -14,4 +14,7 @@ public class Topic {
     @Column
     private String name;
 
+    @Column
+    private String description;
+
 }

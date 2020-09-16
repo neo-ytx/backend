@@ -14,6 +14,6 @@ public class FileStaticConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler(staticAccessPath).addResourceLocations("file:" + uploadFolder);
+        registry.addResourceHandler(staticAccessPath).addResourceLocations("file:" + uploadFolder + "static/image/");
     }
 }

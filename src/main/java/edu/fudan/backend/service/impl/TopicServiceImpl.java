@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class TopicServiceImpl implements TopicService {
@@ -19,9 +21,29 @@ public class TopicServiceImpl implements TopicService {
     private ImageRepository imageRepository;
 
     @Override
-    public List<Topic> getAllTopic() throws Exception {
+    public List<Map<String, Object>> getAllTopic(String urlPath) throws Exception {
         List<Topic> list = topicRepository.findAll();
-        return list;
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (Topic topic : list) {
+            Map<String, Object> obj = new HashMap<>();
+            obj.put("id", topic.getId());
+            obj.put("title", topic.getName());
+            obj.put("description", topic.getDescription());
+            List<Image> imageList = imageRepository.findAllByTopicId(topic.getId());
+            List<String> topicList = new ArrayList<>();
+            for (Image image : imageList) topicList.add(urlPath + image.getFilename());
+            obj.put("images", topicList);
+            result.add(obj);
+        }
+        return result;
+    }
+
+    @Override
+    public void saveTopic(String name, String description) throws Exception {
+        Topic topic = new Topic();
+        topic.setName(name);
+        topic.setDescription(description);
+        topicRepository.save(topic);
     }
 
     @Override

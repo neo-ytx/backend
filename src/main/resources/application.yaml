@@ -39,7 +39,7 @@ spring:
 
 file:
   uploadFolder: d://g/uploadFiles/
-  staticAccessPath: /api/file/**
+  staticAccessPath: /static/image/**
 
 python:
   APISwitch: true
