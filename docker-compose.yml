@@ -1,5 +1,31 @@
 version: "3.2"
 services:
+  backend:
+    image: backend:latest
+    environment:
+      - "DATABASE_HOST=mysql"
+      - "DATABASE_PORT=3306"
+      - "DATABASE_USERNAME=root"
+      - "DATABASE_PASSWORD=root"
+      - "NEO_USERNAME=neo4j"
+      - "NEO_PASSWORD=123456"
+      - "NEO_HOST=Neo4j"
+      - "NEO_PORT=7474"
+      - "ES_HOST=elasticsearch"
+      - "ES_PORT=9200"
+      - "ES_USERNAME=elastic"
+      - "ES_PASSWORD=123456"
+      - "UPLOAD_FOLDER=./uploadFiles/"
+      - "API_SWITCH=true"
+      - "SERVER_PORT=8080"
+    depends_on:
+      - elasticsearch
+      - mysql
+      - Neo4j
+    ports:
+      - 8080:8080
+  #    command: ["./wait-for-it.sh", "mysql:3306", "--", "java", "-jar", "app.jar"]
+
   elasticsearch:
     image: elasticsearch:7.8.1
     ports:

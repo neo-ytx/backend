@@ -1,12 +1,12 @@
 server:
-  port: 8080
+  port: ${SERVER_PORT}
 
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3307/backend?charactorEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true
-    username: root
-    password: root
+    url: jdbc:mysql://${DATABASE_HOST}:${DATABASE_PORT}/backend?charactorEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
     hikari:
       minimum-idle: 5
       idle-timeout: 180000
@@ -18,14 +18,14 @@ spring:
       connection-test-query: SELECT 1
   data:
     neo4j:
-      username: neo4j
-      password: 123456
-      uri: http://localhost:7474
+      username: ${NEO_USERNAME}
+      password: ${NEO_PASSWORD}
+      uri: http://${NEO_HOST}:${NEO_PORT}
   elasticsearch:
     rest:
-      uris: http://localhost:9200
-      username: elastic
-      password: 123456
+      uris: http://${ES_HOST}:${ES_PORT}
+      username: ${ES_USERNAME}
+      password: ${ES_PASSWORD}
 
   jpa:
     show-sql: true
@@ -38,8 +38,8 @@ spring:
       max-request-size: 1000MB
 
 file:
-  uploadFolder: d://g/uploadFiles/
+  uploadFolder: ${UPLOAD_FOLDER}
   staticAccessPath: /static/image/**
 
 python:
-  APISwitch: true
+  APISwitch: ${API_SWITCH}
