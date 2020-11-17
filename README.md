@@ -93,25 +93,27 @@ API_SWITCH=true;
 SERVER_PORT=8080
 ```
 ## 2. Compile
-### Maven
+
+### 2.1 Frontend
+1. Compile Frontend project:
+```bash
+yarn build
+```
+2. Please copy frontend static files to `/src/main/resources/static` 
+
+### 2.2 Backend:Maven
 + Package command
     + Jar is in the `target` folder.
 ```bash
 mvn package
 ```
 
-### Docker
+### 2.3 Backend:Docker
 + Docker build
     + modify the Dockerfile to customize.
 ```bash
 docker build -t backend -f Dockerfile .
 ```
-### Frontend
-1. Compile Frontend project:
-```bash
-yarn build
-```
-2. Please copy frontend static files to `/src/main/resources/static` 
 
 ## 3. Run
 ### environment
